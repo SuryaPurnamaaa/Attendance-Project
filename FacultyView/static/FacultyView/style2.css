@@ -1,0 +1,37 @@
+.container {
+    display: flex;
+    justify-content: space-between;
+}
+
+.chart-container {
+    width: 48%;
+    margin-right: 2%;
+    position: relative;
+}
+
+.statistics {
+    top: 0;
+    left: 0;
+    width: 100%;
+    padding-bottom: 5px;
+    margin-bottom: 20px;
+    background-color: #fff;
+    box-shadow: 0 12px 5px  rgba(0, 0, 0, 0.1);
+    text-align: center;
+    border:1px solid black;
+}
+
+.statistics h2 {
+    margin-top: 0;
+}
+
+.statistics p {
+    margin-bottom: 5px;
+}
+
+canvas {
+    display: block;
+    margin: 0 auto;
+    max-width: 100%;
+    height: auto
+}

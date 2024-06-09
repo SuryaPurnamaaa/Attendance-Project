@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="stylechart.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@500&family=Roboto+Condensed:wght@300;800&display=swap" rel="stylesheet">
+  <title>Student Dashboard</title>
+</head>
+<body>
+  <div class="container">
+    <div class="title">
+      <h3 class="open-sans">Student Attendance</h3>
+      <h1 class="inter">Dashboard</h1>
+    </div>
+    <div class="data">
+      <h2>Today's Attendance</h2>
+      <div class="today">
+        <div class="numbers-container">
+          <div class="number">
+            <h2>12</h2>
+            <p>Total Students</p>
+          </div>
+          <div class="number">
+            <h2>8</h2>
+            <p>Present</p>
+          </div>
+          <div class="number">
+            <h2>2</h2>
+            <p>Sick</p>
+          </div>
+          <div class="number">
+            <h2>2</h2>
+            <p>Absent</p>
+          </div>
+        </div>
+      </div>
+      <h2>Attendance by Gender</h2>
+      <div class="attendance">
+        <canvas id="attendance-chart"></canvas>
+      </div>
+    </div>
+    <h2>Attendance Overview</h2>
+    <div class="overview">
+      <canvas id="overview-chart"></canvas>
+    </div>
+  </div>
+  <script src="script.js"></script>
+</body>
+</html>

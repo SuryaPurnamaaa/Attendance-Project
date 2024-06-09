@@ -1,0 +1,40 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>College Attendance Portal</title>
+    <link rel="stylesheet" href="{% static 'StudentView/Index_Style.css' %}" />
+</head>
+<body>
+<header class="header">
+    <h1 class="header-title">Information Management</h1>
+    <h2>Attendance Portal</h2>
+</header>
+
+<div class="container">
+    <section class="attendance-section">
+        <h2 class="section-title">Select Your Name</h2>
+        <form class="attendance-form" method="POST" action="{% url 'add_manually_post' %}">
+            {% csrf_token %}
+            <ul class="student-list">
+                {% for student in students|dictsort:"name" %}
+                <li class="student">
+                    <label class="student-label">
+                        <span>{{ student.sid }} - {{ student.name }}</span>
+                        <input type="checkbox" class="student-checkbox" name="student-name" value="{{ student.sid }}">
+                    </label>
+                </li>
+                {% endfor %}
+            </ul>
+            <button type="submit" class="submit-button">Submit</button>
+        </form>
+    </section>
+</div>
+
+<footer class="footer">
+    <p>&copy; QR Attendance System</p>
+</footer>
+</body>
+</html>

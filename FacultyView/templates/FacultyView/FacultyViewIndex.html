@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>QR Attendance System</title>
+  <link rel="stylesheet" type = "text/css" href="{% static 'FacultyView/style.css' %}" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+  <script src="{% static 'FacultyView/flatpicr.js' %}"></script>
+  <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+</head>
+<body>
+  <header>
+    <h1>Information Management</h1>
+  </header>
+  <main>
+    <div class="marked-list">
+      <h2>Student Count : {{ students|length }}</h2>
+      <h3 class="present-list">Students List</h3>
+    
+      <!-- Tambahkan tombol refresh di pojok kanan atas -->
+      <div class="refresh-button-container">
+        <button type="button" class="refresh-button" onclick="window.location.reload()">
+          <i class="fas fa-sync-alt"></i> <!-- Ganti dengan ikon refresh -->
+        </button>
+      </div>
+      <div class="attendance-form-container">
+        <form class="attendance-form" method="POST" onsubmit="return confirm('Submit the attendance?');">
+          {% csrf_token %}
+          <input type="text" class="date" id="datepicker" name="attendance_date" placeholder="Pilih Tanggal">
+          <div class="form-list">
+          <ul class="student-list">
+              {% for student in students|dictsort:"name" %}
+                  <li class="student">
+                      <label class="student-label">
+                          <span class="student-name">{{ student.sid }} - {{ student.name }}</span>
+                          <select name="status_{{ student.sid }}">
+                              <option value="Present" {% if student.status == 'Present' %}selected{% endif %}>Present</option>
+                              <option value="Sick" {% if student.status == 'Sick' %}selected{% endif %}>Sick</option>
+                              <option value="Permit" {% if student.status == 'Permit' %}selected{% endif %}>Permit</option>
+                              <option value="Absent" {% if student.status == 'Absent' %}selected{% endif %}>Absent</option>
+                          </select>
+                      </label>
+                  </li>
+              {% endfor %}
+          </ul>
+          </div>
+          <button type="submit">✔ Submit</button>
+        </form>
+        <form class="absent-button" method="POST" action="{% url 'set_to_absent' %}" onsubmit="return confirm('Are you sure you want to set all students to Absent?');">
+          {% csrf_token %}
+          <button type="submit">Set to Absent</button>
+        </form>      
+      </div>
+    </div>
+    
+    <div class="attendance-container">
+      <div class="attendance-card">
+        <h2>Connect to College Wi-Fi and Scan the QR Code to Mark Attendance</h2>
+        <img src="{% static 'FacultyView/qrcode.png' %}" alt="QR Code" width="200" height="200">
+        <p class="hint">Please scan the QR code to mark your attendance.</p>
+      </div>
+      <!-- Tombol menuju halaman statistik -->
+      <div class="statistics-button-container">
+        <a href="{% url 'attendance_statistics' %}">
+          <button type="button" class="statistics-button">Attendance Statistics</button>
+        </a>
+      </div>
+    </div>
+  </main>
+  <footer>
+    <p>&copy; QR Attendance System </p>
+  </footer>
+</body>
+</html>

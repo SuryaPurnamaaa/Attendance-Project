@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Attendance Dashboard</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'FacultyView/style2.css' %}" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <script src="{% static 'FacultyView/flatpicr.js' %}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <!-- Add Chart.js library -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <h1>Attendance Dashboard</h1>
+
+    <input type="text" class="date" id="datepicker" name="attendance_date" placeholder="Pilih Tanggal">
+    <button id="applyBtn">Apply</button>
+
+    <h2>Overall Attendance</h2>
+    <div class="container"> 
+        <div class="chart-container">
+            <div class="statistics">
+                <h3>Attendance Statistics</h3>
+                <p>Total Students: <span id="total_students">{{ total_students }}</span></p>
+                <p>Absent Students: <span id="absent_students">{{ absent_students }}</span></p>
+                <p>Present Students: <span id="present_students">{{ present_students }}</span></p>
+                <p>Sick Students: <span id="sick_students">{{ sick_students }}</span></p>
+                <p>Permit Students: <span id="permit_students">{{ permit_students }}</span></p>
+            </div>
+            <canvas id="attendanceChart" width="400" height="400"></canvas>
+        </div>
+        
+        <div class="chart-container">
+            <div class="statistics">
+                <h3>Gender Distribution</h3>
+                <p>Male Students: <span id="male_students">{{ male_students }}</span></p>
+                <p>Female Students: <span id="female_students">{{ female_students }}</span></p>
+            </div>
+            <canvas id="genderChart" width="400" height="400"></canvas>
+        </div>
+    </div>
+    
+    <br>
+    <br>
+
+
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Get canvas elements for charts
+            var ctxAttendance = document.getElementById('attendanceChart').getContext('2d');
+            var ctxGender = document.getElementById('genderChart').getContext('2d');
+    
+            // Create attendance pie chart
+            var attendancePieChart = new Chart(ctxAttendance, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Present', 'Absent', 'Sick', 'Permit'],
+                    datasets: [{
+                        label: 'Attendance Statistics',
+                        data: [{{ present_students }}, {{ absent_students }}, {{ sick_students }}, {{ permit_students }}],
+                        backgroundColor: [
+                            'rgba(75, 192, 192, 0.2)',
+                            'rgba(255, 99, 132, 0.2)',
+                            'rgba(255, 206, 86, 0.2)',
+                            'rgba(54, 162, 235, 0.2)'
+                        ],
+                        borderColor: [
+                            'rgba(75, 192, 192, 1)',
+                            'rgba(255, 99, 132, 1)',
+                            'rgba(255, 206, 86, 1)',
+                            'rgba(54, 162, 235, 1)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                }
+            });
+    
+            // Create gender bar chart
+            var genderBarChart = new Chart(ctxGender, {
+                type: 'bar',
+                data: {
+                    labels: ['Male', 'Female'],
+                    datasets: [{
+                        label: 'Gender Distribution',
+                        data: [{{ male_students }}, {{ female_students }}],
+                        backgroundColor: [
+                            'rgba(255, 99, 132, 0.2)',
+                            'rgba(54, 162, 235, 0.2)'
+                        ],
+                        borderColor: [
+                            'rgba(255, 99, 132, 1)',
+                            'rgba(54, 162, 235, 1)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                        yAxes: [{
+                            ticks: {
+                                beginAtZero: true       
+                            }
+                        }]
+                    }
+                }
+            });
+
+            // Event handler untuk tombol Apply
+            document.getElementById('applyBtn').addEventListener('click', function() {
+                var selectedDate = document.getElementById('datepicker').value;
+                
+                // Make an AJAX request to get attendance data based on the selected date
+                $.ajax({
+                    url: '/get_attendance_data/',
+                    type: 'GET',
+                    data: {'selected_date': selectedDate},
+                    dataType: 'json',
+                    success: function (data) {
+                        console.log('Data received from server:', data); // Check if correct data is received
+    
+                        // Update attendance statistics
+                        document.getElementById('total_students').innerText = data.total_students;
+                        document.getElementById('absent_students').innerText = data.absent_students;
+                        document.getElementById('present_students').innerText = data.present_students;
+                        document.getElementById('sick_students').innerText = data.sick_students;
+                        document.getElementById('permit_students').innerText = data.permit_students;
+    
+                        // Update chart data
+                        attendancePieChart.data.datasets[0].data = [data.present_students, data.absent_students, data.sick_students, data.permit_students];
+                        attendancePieChart.update();
+                    },
+                    error: function (xhr, errmsg, err) {
+                        console.log(xhr.status + ": " + xhr.responseText);
+                    }
+                });
+            });
+            
+            // Fungsi untuk memperbarui grafik kehadiran
+            function updateAttendanceChart(data) {
+                console.log('Memperbarui grafik dengan data:', data);
+                attendancePieChart.data.datasets[0].data = [data.present, data.absent, data.sick, data.permit];
+                attendancePieChart.update();
+            }
+        });
+    </script>
+</body>
+</html>
